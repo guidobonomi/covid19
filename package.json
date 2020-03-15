@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "datamaps": "^0.5.9",
+    "dayjs": "^1.8.22",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-scripts": "3.4.0"

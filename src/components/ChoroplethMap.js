@@ -13,7 +13,7 @@ class ChoroplethMap extends Component {
                 const myMap = d.filter(d => {
                     const yesterday = new Date(new Date().setDate(new Date().getDate() - 1))
                         .toISOString().substring(0, 10);
-                    return d.data.startsWith(yesterday) && d.sigla_provincia;
+                    return d.data.startsWith(this.props.current) && d.sigla_provincia;
                 }).map(d => {
                     return [d.sigla_provincia, d.totale_casi]
                 })
