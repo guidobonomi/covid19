@@ -9,17 +9,73 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      displayDate: dayjs()
+      originalDataset: [],
+      currentDate: dayjs()
         .subtract(1, 'd')
-        .format('YYYY-MM-DD')
+        .format('YYYY-MM-DD'),
+      currentDataset: null
     };
-    this.onSelect = this.onSelect.bind(this);
+    this.onDateChange = this.onDateChange.bind(this);
   }
 
-  onSelect(date) {
-    this.setState({
-      displayDate: date
+  componentDidMount() {
+    return fetch(
+      'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-province.json'
+    )
+      .then(response => {
+        return response.json();
+      })
+      .then(dataset => {
+        this.setState(
+          {
+            originalDataset: dataset,
+            currentDate: this.state.currentDate,
+            currentDataset: null
+          },
+          this.filterData
+        );
+      });
+  }
+
+  filterData() {
+    const perProvinceMap = this.state.originalDataset.filter(d => {
+      return d.sigla_provincia && d.totale_casi;
     });
+
+    const allValues = perProvinceMap.map(d => {
+      return d.totale_casi;
+    });
+
+    const dataMap = perProvinceMap
+      .filter(d => {
+        return d.data.startsWith(this.state.currentDate);
+      })
+      .map(d => {
+        return [d.sigla_provincia, d.totale_casi];
+      });
+
+    const dataset = {
+      min: Math.min.apply(Math, allValues),
+      max: Math.max.apply(Math, allValues),
+      values: Array.from(dataMap.values())
+    };
+
+    this.setState(prevState => ({
+      originalDataset: prevState.originalDataset,
+      currentDate: prevState.currentDate,
+      currentDataset: dataset
+    }));
+  }
+
+  onDateChange(date) {
+    this.setState(
+      prevState => ({
+        originalDataset: prevState.originalDataset,
+        currentDataset: prevState.currentDataset,
+        currentDate: date
+      }),
+      this.filterData
+    );
   }
 
   render() {
@@ -35,12 +91,11 @@ class App extends Component {
         }}
       >
         <DateSelector
-          from="2020-02-01"
-          to="2020-03-31"
-          current={this.state.displayDate}
-          callback={this.onSelect}
+          from="2020-02-25"
+          current={this.state.currentDate}
+          callback={this.onDateChange}
         />
-        <ChoroplethMap current={this.state.displayDate} />
+        <ChoroplethMap dataset={this.state.currentDataset} />
       </div>
     );
   }

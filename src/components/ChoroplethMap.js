@@ -9,57 +9,27 @@ class ChoroplethMap extends Component {
     this.state = {
       current: this.props.current
     };
+    this.createDataSet = this.createDataSet.bind(this);
   }
+
   componentDidMount() {
-    this.fetchData(this.state.current)
-      .then(this.createDataSet)
-      .then(this.createDataMap);
-  }
-  componentDidUpdate(prev) {
-    if (this.props.current === prev.current) {
+    if (!this.props.dataset) {
       return;
     }
-    this.setState({
-      current: this.props.current
-    });
-    this.fetchData(this.state.current)
-      .then(this.createDataSet)
-      .then(this.createDataMap);
+    this.createDataMap(this.createDataSet(this.props.dataset));
   }
 
-  fetchData = date => {
-    return fetch(
-      'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-province.json'
-    )
-      .then(response => {
-        return response.json();
-      })
-      .then(d => {
-        const perProvinceMap = d.filter(d => {
-          return d.sigla_provincia && d.totale_casi;
-        });
+  componentDidUpdate(prev) {
+    if (!this.props.dataset || this.props.dataset === prev.dataset) {
+      return;
+    }
+    this.createDataMap(this.createDataSet(this.props.dataset));
+  }
 
-        const allValues = perProvinceMap.map(d => {
-          return d.totale_casi;
-        });
-
-        const dataMap = perProvinceMap
-          .filter(d => {
-            return d.data.startsWith(date);
-          })
-          .map(d => {
-            return [d.sigla_provincia, d.totale_casi];
-          });
-
-        return {
-          min: Math.min.apply(Math, allValues),
-          max: Math.max.apply(Math, allValues),
-          values: Array.from(dataMap.values())
-        };
-      });
-  };
-
-  createDataSet = data => {
+  createDataSet(data) {
+    if (!data || !data.values) {
+      return;
+    }
     let paletteScale = d3.scale
       .linear()
       .domain([data.min, data.max])
@@ -77,9 +47,9 @@ class ChoroplethMap extends Component {
     });
 
     return dataset;
-  };
+  }
 
-  createDataMap = dataset => {
+  createDataMap(dataset) {
     document.getElementById('cloropleth_map').innerHTML = '';
     new Datamap({
       element: document.getElementById('cloropleth_map'),
@@ -122,7 +92,7 @@ class ChoroplethMap extends Component {
         return { path: path, projection: projection };
       }
     });
-  };
+  }
 
   render() {
     return (

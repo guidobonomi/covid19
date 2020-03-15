@@ -5,7 +5,6 @@ import dayjs from 'dayjs';
 class DateSelector extends Component {
   constructor(props) {
     super(props);
-
     this.onChange = this.onChange.bind(this);
   }
 
@@ -16,7 +15,7 @@ class DateSelector extends Component {
   render() {
     let options = [];
     let current = dayjs(this.props.from);
-    let to = dayjs(this.props.to);
+    let to = dayjs().subtract(1, 'd');
     while (!current.isAfter(to)) {
       let key = current.format('YYYY-MM-DD');
       let option = (
