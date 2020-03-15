@@ -85,7 +85,7 @@ class ChoroplethMap extends Component {
         var projection = d3.geo
           .mercator()
           .center([13, 42])
-          .scale(2500)
+          .scale(1500)
           .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
 
         var path = d3.geo.path().projection(projection);
