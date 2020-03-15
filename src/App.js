@@ -11,7 +11,6 @@ class App extends Component {
     this.state = {
       originalDataset: [],
       currentDate: dayjs()
-        .subtract(1, 'd')
         .format('YYYY-MM-DD'),
       currentDataset: null
     };
