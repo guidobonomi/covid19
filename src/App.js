@@ -16,9 +16,9 @@ class App extends Component {
     this.onSelect = this.onSelect.bind(this);
   }
 
-  onSelect(event) {
+  onSelect(date) {
     this.setState({
-      displayDate: event.target.value
+      displayDate: date
     });
   }
 

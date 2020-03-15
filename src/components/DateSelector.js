@@ -3,7 +3,13 @@ import React, { Component } from 'react';
 import dayjs from 'dayjs';
 
 class DateSelector extends Component {
-  change(event) {
+  constructor(props) {
+    super(props);
+
+    this.onChange = this.onChange.bind(this);
+  }
+
+  onChange(event) {
     this.props.callback(event.target.value);
   }
 
@@ -23,7 +29,7 @@ class DateSelector extends Component {
     }
 
     let selector = (
-      <select onChange={this.props.callback} value={this.props.current}>
+      <select onChange={this.onChange} value={this.props.current}>
         {options}
       </select>
     );

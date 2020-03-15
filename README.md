@@ -6,3 +6,6 @@
 
 # Build
 `npm run build`
+
+# Deploy
+`npm run build && npm run deploy`
