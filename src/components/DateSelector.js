@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
+import Slider from '@material-ui/core/Slider';
+import Typography from '@material-ui/core/Typography';
 
-import dayjs from 'dayjs';
+function valueToLabel(value) {
+  return new Date(value * 1000).toISOString().substring(5,10);
+}
 
 class DateSelector extends Component {
   constructor(props) {
@@ -8,29 +12,35 @@ class DateSelector extends Component {
     this.onChange = this.onChange.bind(this);
   }
 
-  onChange(event) {
-    this.props.callback(event.target.value);
+  onChange(event, value) {
+    const valueWithTimezone = value + new Date().getTimezoneOffset() * 60;
+    const dateString = new Date(valueWithTimezone * 1000).toISOString().substring(0,10);
+    console.log('1:' + new Date(value * 1000).toISOString().substring(0,10));
+    console.log('2:' + dateString);
+    this.props.callback(dateString);
   }
 
   render() {
-    let options = [];
-    let current = dayjs(this.props.from);
-    let to = dayjs();
-    while (!current.isAfter(to)) {
-      let key = current.format('YYYY-MM-DD');
-      let option = (
-        <option value={key} key={key}>
-          {current.format('DD MMM, YYYY')}
-        </option>
-      );
-      options.push(option);
-      current = current.add(1, 'd');
-    }
-
+    const d = new Date();
+    d.setHours(0,0,0,0);
     let selector = (
-      <select onChange={this.onChange} value={this.props.current}>
-        {options}
-      </select>
+      <div>
+        <Typography id="date-selector" gutterBottom>
+          Date selector
+        </Typography>
+        <Slider
+          defaultValue={Math.round(d.getTime()/1000) - 86400 + d.getTimezoneOffset() * 60}
+          min={this.props.from}
+          max={Math.round(d.getTime()/1000)}
+          step={86400}
+          getAriaValueText={valueToLabel}
+          valueLabelDisplay="on"
+          valueLabelFormat={valueToLabel}
+          onChange={this.onChange}
+          aria-labelledby="date-selector"
+          style={{ width: '98%' }}
+        />
+      </div>
     );
     return selector;
   }

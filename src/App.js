@@ -90,7 +90,7 @@ class App extends Component {
         }}
       >
         <DateSelector
-          from="2020-02-25"
+          from={1582588800}
           current={this.state.currentDate}
           callback={this.onDateChange}
         />

@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.9.7",
     "datamaps": "^0.5.9",
     "dayjs": "^1.8.22",
     "react": "^16.13.0",
